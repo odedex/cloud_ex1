@@ -23,36 +23,40 @@ router.use('/getfile/:fileid/', function (req, res, next) {
 
 
 var nodemailer = require('nodemailer');
-router.use('/sendmail/', function (req, res, next) {
+router.post('/sendmail/', function (req, res, next) {
     // uses the upload library
     // bodyParams - subject, content, to
 
-    var smtpTransport = nodemailer.createTransport('SMTP', {
-        host: 'localhost', //TODO: may not work
-        port: 25,
-        auth: {
-            user: 'username',
-            pass: 'password'
-        }
-    });
+    //res.render('index', {title: 'sendmail'});
 
+    var transporter = nodemailer.createTransport('smtps://slimfilesystem%40gmail.com:98vqycg498j@smtp.gmail.com');
+
+    var validator = require('validator');
+
+    if (!validator.isEmail(req.body.to)) {
+        res.end("bad email format");
+        return console.log("bad email format");
+    }
+
+// setup e-mail data with unicode symbols
     var mailOptions = {
-        from: 'Cloud File Server', // sender address
-        to: req.param("to"), // list of receivers
-        subject: req.param("subject"), // Subject line
-        text: req.param("content") // plaintext body
+        from: '"Slim Shady Files" <slimfilesystem@gmail.com>', // sender address
+        to: req.body.to, // list of receivers
+        subject: req.body.subject, // Subject line
+        text: req.body.text // plaintext body
         //html: '<b>Hello world 🐴</b>' // html body
-
     };
 
-    smtpTransport.sendMail(mailOptions, function(error, info){
+// send mail with defined transport object
+    transporter.sendMail(mailOptions, function(error, info){
         if(error){
+            res.end("Message failed to send");
             return console.log(error);
         }
+        res.end("Message sent");
         console.log('Message sent: ' + info.response);
     });
 
-    res.render('index', {title: 'sendmail'});
 });
 
 
