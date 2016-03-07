@@ -13,16 +13,37 @@ router.use('/upload', function (req, res, next) {
 
 });
 
-router.use('/getfile/:fileid/', function (req, res, next) {
+var fs = require('fs');
+var path = require('path');
+router.get('/get/:filename/:fileid', function (req, res, next) {
     // uses the upload library
     // should use basic HTTP AUTH
 
-    res.render('index', {title: 'getfile'});
+
+    //res.render('index', {title: 'getfile'});
+    var diskFilename = req.params["fileid"];
+    var actualFilename = req.params["filename"];
+    var fpath = "./uploads/" + diskFilename.toString(); //TODO: path may change on server
+    fpath = path.resolve(fpath);
+
+    console.log("fpath is: " + fpath.toString());
+    res.download(fpath, actualFilename, function(err) {
+        if (err) {
+            console.log("error occured: ");
+            console.log(err);
+            res.status(err.status).end();
+        }
+        else {
+            console.log('Sent:', fpath);
+            res.end("file sent");
+        }
+    });
 
 });
 
 
 var nodemailer = require('nodemailer');
+var validator = require('validator');
 router.post('/sendmail/', function (req, res, next) {
     // uses the upload library
     // bodyParams - subject, content, to
@@ -30,8 +51,6 @@ router.post('/sendmail/', function (req, res, next) {
     //res.render('index', {title: 'sendmail'});
 
     var transporter = nodemailer.createTransport('smtps://slimfilesystem%40gmail.com:98vqycg498j@smtp.gmail.com');
-
-    var validator = require('validator');
 
     if (!validator.isEmail(req.body.to)) {
         res.end("bad email format");
