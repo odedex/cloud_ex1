@@ -44,26 +44,76 @@ router.get('/get/:filename/:fileid', function (req, res, next) {
 
 var nodemailer = require('nodemailer');
 var validator = require('validator');
-router.post('/sendmail/', function (req, res, next) {
+
+function sendMail (subject, content, to, fileOnDisk, filename) {
     // uses the upload library
-    // bodyParams - subject, content, to
+    // bodyParams - subject, content, to, fileOnDisk, filename
 
     //res.render('index', {title: 'sendmail'});
 
     var transporter = nodemailer.createTransport('smtps://slimfilesystem%40gmail.com:98vqycg498j@smtp.gmail.com');
 
-    if (!validator.isEmail(req.body.to)) {
+    if (!validator.isEmail(to)) {
         res.end("bad email format");
         return console.log("bad email format");
     }
 
-// setup e-mail data with unicode symbols
+    var fpath = "./uploads/" + fileOnDisk.toString(); //TODO: path may change on server
+    fpath = path.resolve(fpath);
+
+    // setup e-mail data with unicode symbols
     var mailOptions = {
-        from: '"Slim Shady Files" <slimfilesystem@gmail.com>', // sender address
-        to: req.body.to, // list of receivers
-        subject: req.body.subject, // Subject line
-        text: req.body.text // plaintext body
+        from: '"Slim File System" <slimfilesystem@gmail.com>', // sender address
+        to: to, // list of receivers
+        subject: subject, // Subject line
+        text: content, // plaintext body
         //html: '<b>Hello world 🐴</b>' // html body
+
+        attachments: [
+            //{   // utf-8 string as an attachment
+            //    filename: 'text1.txt',
+            //    content: 'hello world!'
+            //},
+            //{   // binary buffer as an attachment
+            //    filename: 'text2.txt',
+            //    content: new Buffer('hello world!','utf-8')
+            //},
+            {   // file on disk as an attachment
+                filename: filename,
+                path: fpath // stream this file
+            }
+            //{   // filename and content type is derived from path
+            //    path: '/path/to/file.txt'
+            //},
+            //{   // stream as an attachment
+            //    filename: req.body.filename,
+            //    content: fs.createReadStream(fpath)
+            //}
+            //{   // define custom content type for the attachment
+            //    filename: 'text.bin',
+            //    content: 'hello world!',
+            //    contentType: 'text/plain'
+            //},
+            //{   // use URL as an attachment
+            //    filename: 'license.txt',
+            //    path: 'https://raw.github.com/nodemailer/nodemailer/master/LICENSE'
+            //},
+            //{   // encoded string as an attachment
+            //    filename: 'text1.txt',
+            //    content: 'aGVsbG8gd29ybGQh',
+            //    encoding: 'base64'
+            //},
+            //{   // data uri as an attachment
+            //    path: 'data:text/plain;base64,aGVsbG8gd29ybGQ='
+            //},
+            //{
+            //    // use pregenerated MIME node
+            //    raw: 'Content-Type: text/plain\r\n' +
+            //    'Content-Disposition: attachment;\r\n' +
+            //    '\r\n' +
+            //    'Hello world!'
+            //}
+        ]
     };
 
 // send mail with defined transport object
@@ -76,7 +126,7 @@ router.post('/sendmail/', function (req, res, next) {
         console.log('Message sent: ' + info.response);
     });
 
-});
+}
 
 
 module.exports = router;
