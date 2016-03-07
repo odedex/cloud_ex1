@@ -1,3 +1,52 @@
-<h1>
-    Index.html file
-</h1>
+<html>
+<head>
+    <script src="http://code.jquery.com/jquery-2.2.1.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+</head>
+<body>
+<div class="container">
+    <div class="header clearfix">
+        <h3 class="text-muted">Cloud - Ex1</h3>
+    </div>
+
+    <div class="jumbotron">
+        <h1>Slim File System</h1>
+        <p class="lead">send large files with few mouse clicks</p>
+        <!--<p><a class="btn btn-lg btn-success" href="#" role="button">Sign up today</a></p>-->
+    </div>
+
+    <div class="row">
+        <div class="col-lg-3"></div>
+        <div class="col-lg-6">
+            <form id="form" action="/upload" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Email address</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" name="toemail" placeholder="who would like to send it to?" required>
+                </div>
+                <div class="form-group">
+                    <label for="fileupload">File input</label>
+                    <input type="file" id="fileupload" name="fileupload" required>
+                    <p class="help-block">max file size: 5MB</p>
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+        </div>
+
+        <div class="col-lg-3">
+
+        </div>
+    </div>
+
+</div> <!-- /container -->
+
+</body>
+</html>

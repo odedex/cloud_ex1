@@ -1,17 +1,44 @@
 var express = require('express');
 var router = express.Router();
 
+var multer  = require('multer');
+var upload = multer({ dest: './uploads/' });
+var basicAuth = require('basic-auth-connect');
+
+
+
 /* GET home page. */
 router.get('/', function (req, res, next) {
     res.render('index', {title: 'Express'});
 });
 
-router.use('/upload', function (req, res, next) {
-    // uses the upload library
+router.post('/upload', upload.single('fileupload'), function (req, res, next) {
+    console.log(req.file);
+    console.log(req.body);
 
-    res.render('index', {title: 'upload'});
+    //var url = req.file.originalname + "/" + req.file.filename;
+    //console.log(url);
+    sendMail("you got mail", "you got mail", req.body["toemail"],req.file.filename, req.file.originalname, function (err){
+        if (err != null){
+            next();
+        } else {
+            res.redirect("/succcess");
 
+
+    }});
 });
+
+router.use("/succcess", function (req, res, next) {
+    res.status(200);
+    res.render('success', {
+        message: "Operation was successful",
+        description: "your file was sent to his destination"
+    });
+});
+
+
+
+
 
 var fs = require('fs');
 var path = require('path');
@@ -45,7 +72,7 @@ router.get('/get/:filename/:fileid', function (req, res, next) {
 var nodemailer = require('nodemailer');
 var validator = require('validator');
 
-function sendMail (subject, content, to, fileOnDisk, filename) {
+function sendMail (subject, content, to, fileOnDisk, filename, callback) {
     // uses the upload library
     // bodyParams - subject, content, to, fileOnDisk, filename
 
@@ -53,6 +80,7 @@ function sendMail (subject, content, to, fileOnDisk, filename) {
 
     var transporter = nodemailer.createTransport('smtps://slimfilesystem%40gmail.com:98vqycg498j@smtp.gmail.com');
 
+    console.log(to);
     if (!validator.isEmail(to)) {
         res.end("bad email format");
         return console.log("bad email format");
@@ -70,60 +98,18 @@ function sendMail (subject, content, to, fileOnDisk, filename) {
         //html: '<b>Hello world 🐴</b>' // html body
 
         attachments: [
-            //{   // utf-8 string as an attachment
-            //    filename: 'text1.txt',
-            //    content: 'hello world!'
-            //},
-            //{   // binary buffer as an attachment
-            //    filename: 'text2.txt',
-            //    content: new Buffer('hello world!','utf-8')
-            //},
+
             {   // file on disk as an attachment
                 filename: filename,
                 path: fpath // stream this file
             }
-            //{   // filename and content type is derived from path
-            //    path: '/path/to/file.txt'
-            //},
-            //{   // stream as an attachment
-            //    filename: req.body.filename,
-            //    content: fs.createReadStream(fpath)
-            //}
-            //{   // define custom content type for the attachment
-            //    filename: 'text.bin',
-            //    content: 'hello world!',
-            //    contentType: 'text/plain'
-            //},
-            //{   // use URL as an attachment
-            //    filename: 'license.txt',
-            //    path: 'https://raw.github.com/nodemailer/nodemailer/master/LICENSE'
-            //},
-            //{   // encoded string as an attachment
-            //    filename: 'text1.txt',
-            //    content: 'aGVsbG8gd29ybGQh',
-            //    encoding: 'base64'
-            //},
-            //{   // data uri as an attachment
-            //    path: 'data:text/plain;base64,aGVsbG8gd29ybGQ='
-            //},
-            //{
-            //    // use pregenerated MIME node
-            //    raw: 'Content-Type: text/plain\r\n' +
-            //    'Content-Disposition: attachment;\r\n' +
-            //    '\r\n' +
-            //    'Hello world!'
-            //}
+
         ]
     };
 
 // send mail with defined transport object
     transporter.sendMail(mailOptions, function(error, info){
-        if(error){
-            res.end("Message failed to send");
-            return console.log(error);
-        }
-        res.end("Message sent");
-        console.log('Message sent: ' + info.response);
+       callback(error);
     });
 
 }
