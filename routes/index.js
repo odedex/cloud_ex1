@@ -3,7 +3,11 @@ var router = express.Router();
 
 var multer  = require('multer');
 var upload = multer({ dest: './uploads/' });
-var basicAuth = require('basic-auth-connect');
+var nodemailer = require('nodemailer');
+var validator = require('validator');
+
+var fs = require('fs');
+var path = require('path');
 
 
 
@@ -19,6 +23,13 @@ router.post('/upload', upload.single('fileupload'), function (req, res, next) {
     //var url = req.file.originalname + "/" + req.file.filename;
     //console.log(url);
     sendMail("you got mail", "you got mail", req.body["toemail"],req.file.filename, req.file.originalname, function (err){
+        fs.unlink('./uploads/' + req.file.filename, function (err) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log('successfully deleted file');
+            }
+        });
         if (err != null){
             next();
         } else {
@@ -40,8 +51,6 @@ router.use("/succcess", function (req, res, next) {
 
 
 
-var fs = require('fs');
-var path = require('path');
 router.get('/get/:filename/:fileid', function (req, res, next) {
     // uses the upload library
     // should use basic HTTP AUTH
@@ -69,8 +78,7 @@ router.get('/get/:filename/:fileid', function (req, res, next) {
 });
 
 
-var nodemailer = require('nodemailer');
-var validator = require('validator');
+
 
 function sendMail (subject, content, to, fileOnDisk, filename, callback) {
     // uses the upload library
