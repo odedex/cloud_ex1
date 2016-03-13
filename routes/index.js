@@ -50,38 +50,6 @@ router.use("/succcess", function (req, res, next) {
 });
 
 
-
-
-
-router.get('/get/:filename/:fileid', function (req, res, next) {
-    // uses the upload library
-    // should use basic HTTP AUTH
-
-
-    //res.render('index', {title: 'getfile'});
-    var diskFilename = req.params["fileid"];
-    var actualFilename = req.params["filename"];
-    var fpath = "./uploads/" + diskFilename.toString(); //TODO: path may change on server
-    fpath = path.resolve(fpath);
-
-    console.log("fpath is: " + fpath.toString());
-    res.download(fpath, actualFilename, function(err) {
-        if (err) {
-            console.log("error occured: ");
-            console.log(err);
-            res.status(err.status).end();
-        }
-        else {
-            console.log('Sent:', fpath);
-            res.end("file sent");
-        }
-    });
-
-});
-
-
-
-
 function sendMail (subject, content, to, fileOnDisk, filename, callback) {
     // uses the upload library
     // bodyParams - subject, content, to, fileOnDisk, filename
