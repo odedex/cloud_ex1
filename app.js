@@ -19,7 +19,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 // Basic HTTP Auth
-app.use(basicAuth('1', '1'));
+app.use(basicAuth('admin', 'admin'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);

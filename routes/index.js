@@ -22,7 +22,9 @@ router.post('/upload', upload.single('fileupload'), function (req, res, next) {
 
     //var url = req.file.originalname + "/" + req.file.filename;
     //console.log(url);
-    sendMail("you got mail", "you got mail", req.body["toemail"],req.file.filename, req.file.originalname, function (err){
+    var mailSubject = "Incoming attached file";
+    var mailContent = "You've received an attached mail sent to you by the cloud!";
+    sendMail(mailSubject, mailContent, req.body["toemail"],req.file.filename, req.file.originalname, function (err){
         fs.unlink('./uploads/' + req.file.filename, function (err) {
             if (err) {
                 console.log(err);
